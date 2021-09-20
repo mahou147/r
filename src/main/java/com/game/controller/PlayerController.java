@@ -5,7 +5,6 @@ import com.game.entity.Player;
 import com.game.entity.Profession;
 import com.game.entity.Race;
 import com.game.service.PlayerService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,12 +22,16 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/rest/players")
-@RequiredArgsConstructor
 public class PlayerController {
+
+    @Autowired
+    public PlayerController(PlayerService playerService) {
+        this.playerService = playerService;
+    }
 
     private final PlayerService playerService;
 
-    @RequestMapping(value = "/count", method = RequestMethod.GET,  produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> getCount(@RequestParam(required = false, defaultValue = "0") Integer pageNumber,
                                             @RequestParam(required = false, defaultValue = "3") Integer pageSize,
                                             @RequestParam(required = false, defaultValue = "ID") PlayerOrder order,
@@ -55,7 +58,7 @@ public class PlayerController {
                 sort = Sort.by("experience");
                 break;
             case BIRTHDAY:
-                sort =Sort.by("birthday");
+                sort = Sort.by("birthday");
                 break;
         }
 
@@ -63,7 +66,7 @@ public class PlayerController {
         Page<Player> players = playerService.searchByCriterias(name, title, race, profession, banned, after, before,
                 minExperience, maxExperience, minLevel, maxLevel, pageRequest);
 
-        return new ResponseEntity<>((int)players.getTotalElements(), HttpStatus.OK);
+        return new ResponseEntity<>((int) players.getTotalElements(), HttpStatus.OK);
 
     }
 
@@ -93,12 +96,12 @@ public class PlayerController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public ResponseEntity<Player> updatePlayer(@RequestBody @Valid Player player, @PathVariable Long id) {
-        Player updated= playerService.update(player, id);
+        Player updated = playerService.update(player, id);
 
         if (updated == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if (updated.getId() == null|| updated.getId() <= 0 ||!(updated.getId() instanceof Long)) {
+        if (updated.getId() == null || updated.getId() <= 0 || !(updated.getId() instanceof Long)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(updated, HttpStatus.OK);
