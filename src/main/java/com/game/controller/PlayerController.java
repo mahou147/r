@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 
@@ -83,7 +82,7 @@ public class PlayerController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Player> savePlayer(@RequestBody @Valid Player player) {
+    public ResponseEntity<Player> savePlayer(@RequestBody Player player) {
         HttpHeaders headers = new HttpHeaders();
 
         try {
@@ -95,7 +94,7 @@ public class PlayerController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
-    public ResponseEntity<Player> updatePlayer(@RequestBody @Valid Player player, @PathVariable Long id) {
+    public ResponseEntity<Player> updatePlayer(@RequestBody Player player, @PathVariable Long id) {
         Player updated = playerService.update(player, id);
 
         if (updated == null) {
